@@ -32,61 +32,47 @@
 
 Для преобразования файла в формате GEDCOM к предикатам Пролога, я использовал язык Си, так как хорошо его знаю и достаточно сильно к нему привык. Поскольку в GEDCOM файле изначально идут id индивидов то программа прогоняет файл вплоть до встречи знака @. После в id нового индивида записывается 10 следующих за @ знаков. Затем в имя данного члена семьи записывается то что идет за словом DISPLAY, так как в строке NAME фамилия содержит лишние символы.
 
-`while (tmp != '\n' && tmp !='\0')//чтение имени
-
+```C
+while (tmp != '\n' && tmp !='\0')//чтение имени
 {
-
 	person[count].name[inPersonCount] = tmp;
-	
 	inPersonCount++;
-	
 	tmp = fgetc(ged);
-	
-}`
+}
+```
 
 Позиции givn, middle, surn, position и boundaryrect пропускаются так как не имеют смысла. Позиция SEX заносится в пол человека с понижением регистра.
 
-`while (tmp != 'F' && tmp != 'M')//пропуск слова sex
-
+```C
+while (tmp != 'F' && tmp != 'M')//пропуск слова sex
 {
-
-	tmp = fgetc(ged);
-	
+	tmp = fgetc(ged);	
 }
-
 tmp = tmp + 32;//понижение регистра
-
-person[count].sex = tmp;`
+person[count].sex = tmp;
+```
 
 После считывания всех членов семьи программа начинает расставлять связи типа родители дети. Считывается id мужа после чего он находится в списке членов семьи, такие же действия совершаются в отношении жены. Далее считывается id ребёнка, он так же находится в списке людей и ссылка на этот ребёнок добавляется в динамический массив детей при жене и муже.
 
-`for (inPersonCount = 0; inPersonCount < count; inPersonCount++)//нахождение ребёнка в списке людей
-
+```C
+for (inPersonCount = 0; inPersonCount < count; inPersonCount++)//нахождение ребёнка в списке людей
 {
-
 	if (strncmp(tmpId, person[inPersonCount].id, 10) == 0)
-
 	{
-
 		person[husband].children++;
-
 		person[wife].children++;
-
 		person[husband].child = (TPerson*)realloc(person[husband].child, person[husband].children * sizeof(TPerson));
-
 		person[wife].child = (TPerson*)realloc(person[wife].child, person[wife].children * sizeof(TPerson));
-
 		person[husband].child[person[husband].children - 1] = person[inPersonCount];
-
 		person[wife].child[person[wife].children - 1] = person[inPersonCount];
-
 	}
-
-}`
+}
+```
 
 После нахождения всех родственных связей GEDCOM файл закрывается и полученный массив людей выводится в консоль.
 
-`for (inPersonCount = 0; inPersonCount < count; inPersonCount++)//печать пола человека и его детей
+```C
+for (inPersonCount = 0; inPersonCount < count; inPersonCount++)//печать пола человека и его детей
 {
 	printf("sex(\"%s\",%c).\n", person[inPersonCount].name, person[inPersonCount].sex);
 	for (childCounter = 0; childCounter < person[inPersonCount].children; childCounter++)
@@ -94,7 +80,8 @@ person[count].sex = tmp;`
 		printf("parent(\"%s\",\"%s\").\n", person[inPersonCount].name, person[inPersonCount].child[childCounter].name);
 	}
 	free(person[inPersonCount].child);//заранее освобождаем выделенную на детей память
-}`
+}
+```
 
 ## Предикат поиска родственника
 
@@ -104,49 +91,39 @@ person[count].sex = tmp;`
 
 `cousin_male_in_first_generation(Man,Cousin):-sex(Cousin,m),parent(Parent1,Man),parent(Parent2,Cousin),father(Parent1,Father),father(Parent2,Father),not(Man = Cousin),not(brother(Man,Cousin)).`
 
-`?- cousin_male_in_first_generation("Ирина Валерьевна Коноплёва",X).
-
+```prolog
+?- cousin_male_in_first_generation("Ирина Валерьевна Коноплёва",X).
 X = "Владислав Александрович Коноплёв" ;
-
 X = "Никита Александрович Коноплёв" ;
-
 false.
 
 ?- cousin_male_in_first_generation(X,"Роман Михайлович Лисовский").
-
 X = "Марина Александровна Лазарева" ;
-
 false.
 
 ?- cousin_male_in_first_generation("Елена Владимировна Лисовская","Валерий Владимирович Коноплёв").
-
 true ;
-
-false.`
+false.
+```
 
 ## Определение степени родства
 
 Поочерёдно перебираются варианты, когда эти два индивида являются друг другу родителями, матерями, отцами, братьями, сестрами, сыновьями, дочерьми, дедушками, бабушками, двоюродными братьями, внучками, и внуками. Во всех случаях проверяется, не являются ли они одними и теми же людьми.
 
-`relative(Relationship,Man1,Man2):-(parent(Man1,Man2),Relationship = parent, not(Man1 = Man2));(mother(Man1,Man2),Relationship = mother, not(Man1 = Man2));(father(Man1,Man2),Relationship = father, not(Man1 = Man2));(brother(Man1,Man2),Relationship = brother, not(Man1 = Man2));(sister(Man1,Man2),Relationship = sister, not(Man1 = Man2));(son(Man1,Man2),Relationship = son, not(Man1 = Man2));(daughter(Man1,Man2),Relationship = daughter, not(Man1 = Man2));(grandfather(Man1,Man2),Relationship = grandfather, not(Man1 = Man2));(grandmother(Man1,Man2),Relationship = grandmother, not(Man1 = Man2));(cousin_male_in_first_generation(Man1,Man2),Relationship = cousin_male_in_first_generation, not(Man1 = Man2));(granddaughter(Man1,Man2),Relationship = granddaughter, not(Man1 = Man2));(grandson(Man1,Man2),Relationship = grandson, not(Man1 = Man2)).`
-
-`?- relative(X,"Борис Иванович Коноплёв","Елена Владимировна Лисовская").
-
+```prolog
+relative(Relationship,Man1,Man2):-(parent(Man1,Man2),Relationship = parent, not(Man1 = Man2));(mother(Man1,Man2),Relationship = mother, not(Man1 = Man2));(father(Man1,Man2),Relationship = father, not(Man1 = Man2));(brother(Man1,Man2),Relationship = brother, not(Man1 = Man2));(sister(Man1,Man2),Relationship = sister, not(Man1 = Man2));(son(Man1,Man2),Relationship = son, not(Man1 = Man2));(daughter(Man1,Man2),Relationship = daughter, not(Man1 = Man2));(grandfather(Man1,Man2),Relationship = grandfather, not(Man1 = Man2));(grandmother(Man1,Man2),Relationship = grandmother, not(Man1 = Man2));(cousin_male_in_first_generation(Man1,Man2),Relationship = cousin_male_in_first_generation, not(Man1 = Man2));(granddaughter(Man1,Man2),Relationship = granddaughter, not(Man1 = Man2));(grandson(Man1,Man2),Relationship = grandson, not(Man1 = Man2)).`
+?- relative(X,"Борис Иванович Коноплёв","Елена Владимировна Лисовская").
 X = granddaughter ;
-
 false.
 
 ?- relative(X,"Олег Романович Лисовский","Ольга Борисовна Киселёва").
-
 X = grandmother ;
-
 false.
 
 ?- relative(cousin_male_in_first_generation,X,"Олег Романович Лисовский").
-
 X = "Дарья Владимировна Шведова" ;
-
-X = "Анна Владимировна Шведова" ;`
+X = "Анна Владимировна Шведова" ;
+```
 
 Приведите описание метода решения, важные фрагменты исходного кода, протокол работы.
 
