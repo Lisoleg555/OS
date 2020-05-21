@@ -14,7 +14,8 @@
 
 ### Предварительная обработка входных данных
 
-TODO
+Загружаем все файлы с расширением .txt и создаём из них список. Создаём из них два словаря. Далее вычисляем
+паттерны и нормализуем их.
 
 ### Эксперимент 1: RNN
 
@@ -26,11 +27,15 @@ TODO
 
 #### Результат
 
-TODO
+![График](epoch_loss_SimpleRNN.svg)
+
+" dangerous nor did it greatly gall me when i used my arm then i looked around me and as the ship was now in a sense my own i began to think of clearing it from its last passenger the dead man o'brien he had pitched as i have said against the bulwarks where he lay like some horrible ungainly "
+
+interior the puppet the the the the ” ” are the ” unfort'nate ” ” said ” said ” ” cried the ” said ” ” said ” ” ” ” said ” ” said ” ” ” ” ” ” ” said ” replied the ” ” ” ” said ” ” cried the ” said ” ” said ” said ” ” said ” ” said ” ” ” ” ” said ” said ” ” said ” ” said ” said ” ” ” ” ” said ” ” said ” ” said ” said ” ”
 
 #### Вывод по данному эксперименту
 
-TODO
+
 
 ### Эксперимент 2: Однослойная LSTM
 
@@ -44,43 +49,51 @@ TODO
 
 ![График](epoch_loss.svg)
 
+" the wind's eye but i'll tell you i was sober i was on'y dog tired and if i'd awoke a second sooner i'd a caught you at the act i would he wasn't dead when i got round to him not he ” “well ” says captain smollett as cool as can be all that silver said was a riddle "
+
+the the the the the the the the the the the ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ” ”
+
 #### Вывод по данному эксперименту
 
-TODO
+
 
 ### Эксперимент 3: Двухслойная LSTM
 
 #### Архитектура сети
 
-Приведите архитектуру сети в виде последовательности слоёв
+Является по сути той же самой LSTM сетью, но со вторым слоем.
 
 #### Результат
 
 ![График](loss_LSTM2.svg)
 
-Приведите графики метрик обучения и получившийся результат генерации
+" rules i do i won't hurt a depytation ” thus encouraged the buccaneer stepped forth more briskly and having passed something to silver from hand to hand slipped yet more smartly back again to his companions the sea cook looked at what had been given him “the black spot i thought so ” he observed “where might you have got "
+
+” ” ” said ” said ” said ” said ” captain the captain ” he the captain ” he the captain ” he the captain ” he the captain ” he the captain ” he the captain ” he the captain ” he the ” ” ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ” said ”
 
 #### Вывод по данному эксперименту
 
-### Эксперимент 4: GRU
 
-Является модификацией LSTM, соответственно являясь ещё более технологичной модификацией RNN. Главное отличие от
-LSTM сети заключается в том, что вентили забвения и входа объединяются в единый вентиль обновления
+
+### Эксперимент 4: GRU
 
 #### Архитектура сети
 
-
-
-Приведите архитектуру сети в виде последовательности слоёв
+Является модификацией LSTM, соответственно являясь ещё более технологичной модификацией RNN. Главное отличие от
+LSTM сети заключается в том, что вентили забвения и входа объединяются в единый вентиль обновления.
 
 #### Результат
 
 ![График](epoch_loss_GRU.svg)
 
-Приведите графики метрик обучения и получившийся результат генерации
+" stay here a bit ” he continued “i'm a plain man rum and bacon and eggs is what i want and that head up there for to watch ships off what you mought call me you mought call me captain oh i see what you're at there” and he threw down three or four gold pieces on the threshold “you "
+
+the ” the the ” says the doctor the ” the the “would the the doctor the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the forever “they're fourth the sp'iling blabbing forever amen you'd retorted you is the i the i the i the the the the feelings the the the the the the the the the the the the the the the the the the the the the the
 
 #### Вывод по данному эксперименту
 
+
+
 ### Выводы
 
-Приведите сравнительную характеристику использованных методов и сделайте выводы.
+Самым быстрым оказалась RNN 
